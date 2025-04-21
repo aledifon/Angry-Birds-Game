@@ -43,12 +43,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 50
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -105,18 +105,62 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: CatapultSprite_0
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 29
+        width: 40
+        height: 196
+      alignment: 9
+      pivot: {x: 0.3057661, y: 0.87492377}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf29a93de093b794ea41f132d3bb58db
+      internalID: 714973834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CatapultSprite_1
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 29
+        width: 48
+        height: 196
+      alignment: 9
+      pivot: {x: 0.16953246, y: 0.8468455}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 949d9c4765e4d344b82603b2317d880f
+      internalID: 1307434639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: d350d6b74a6f1e046baafb3080f37b5a
     internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      CatapultSprite_0: 714973834
+      CatapultSprite_1: 1307434639
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
