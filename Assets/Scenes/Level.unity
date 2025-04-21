@@ -516,7 +516,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61baddbb5c77b174d8c29215d284b92e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxStretch: 5
+  maxStretch: 3
   catapultFront: {fileID: 787386214}
   catapultBack: {fileID: 1895801121}
   groundLayer:
