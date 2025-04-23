@@ -21,8 +21,7 @@ public class Bird : MonoBehaviour
     float circleRadius;         // Collider radius
     bool clickedOn;             // To know if the player has clicked over the bird
 
-
-    [SerializeField] LayerMask groundLayer;
+    [SerializeField] LayerMask groundLayer;    
 
     #region Unity API
     private void Awake()
@@ -38,8 +37,15 @@ public class Bird : MonoBehaviour
         rayToMouse = new Ray(catapultBack.transform.position, Vector3.zero);
         leftCatapultToBird = new Ray(catapultFront.transform.position, Vector3.zero);
         circleRadius = GetComponent<CircleCollider2D>().radius;
-    }    
-
+    }
+    private void OnEnable()
+    {
+        EventManager.onPlayerDisable += PlayerDisable;
+    }
+    private void OnDisable()
+    {
+        EventManager.onPlayerDisable -= PlayerDisable;
+    }
     void FixedUpdate()
     {
         // Launch Raycast from the bird to the left catapult
@@ -188,5 +194,10 @@ public class Bird : MonoBehaviour
         Debug.DrawLine(rayToMouse.origin, 
                         rayToMouse.origin + rayToMouse.direction * rayDistance, 
                         Color.red);        
+    }
+
+    void PlayerDisable()
+    {
+        Destroy(gameObject,1f);               
     }
 }
