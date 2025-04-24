@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0b0f733a01d1934f9e655714b3591bb, type: 3}
+  m_Name: Player Data
+  m_EditorClassIdentifier: 
+  birdFlyingFx: {fileID: 8300000, guid: 604d7d21446fbb14fb78a7966a48c780, type: 3}
+  birdHitFx: {fileID: 8300000, guid: c68c2c4cc1faf0744a40f317e7c7af94, type: 3}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  dustEffect: {fileID: 3768520428415398985, guid: 7b22ee9bb0fbfcc44b82d9b26bcf9f2e, type: 3}

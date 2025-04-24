@@ -27,15 +27,17 @@ public class Bird : MonoBehaviour
     [Header("Audio Refs")]    
     AudioSource birdAudioSource;
 
-    [Header("Audio Clips")]    
-    [SerializeField] AudioClip birdFlyingFx;
-    [SerializeField] AudioClip birdHitFx;
+    [SerializeField] PlayerData playerData;
 
-    [Header("Ground Layer")]
-    [SerializeField] LayerMask groundLayer;
+    //[Header("Audio Clips")]    
+    //[SerializeField] AudioClip birdFlyingFx;
+    //[SerializeField] AudioClip birdHitFx;
 
-    [Header("Dust Effect")]
-    [SerializeField] GameObject dustEffect;
+    //[Header("Ground Layer")]
+    //[SerializeField] LayerMask groundLayer;
+
+    //[Header("Dust Effect")]
+    //[SerializeField] GameObject dustEffect;
 
     #region Unity API
     private void Awake()
