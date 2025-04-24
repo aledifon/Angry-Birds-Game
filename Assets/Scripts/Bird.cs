@@ -21,13 +21,28 @@ public class Bird : MonoBehaviour
     float circleRadius;         // Collider radius
     bool clickedOn;             // To know if the player has clicked over the bird
 
-    [SerializeField] LayerMask groundLayer;    
+    [Header("Catapult Ref")]
+    [SerializeField] Catapult catapult;
+
+    [Header("Audio Refs")]    
+    AudioSource birdAudioSource;
+
+    [Header("Audio Clips")]    
+    [SerializeField] AudioClip birdFlyingFx;
+    [SerializeField] AudioClip birdHitFx;
+
+    [Header("Ground Layer")]
+    [SerializeField] LayerMask groundLayer;
+
+    [Header("Dust Effect")]
+    [SerializeField] GameObject dustEffect;
 
     #region Unity API
     private void Awake()
     {
         spring = GetComponent<SpringJoint2D>();
         rb2D = GetComponent<Rigidbody2D>();
+        birdAudioSource = GetComponent<AudioSource>();
     }
     void Start()
     {
@@ -40,11 +55,13 @@ public class Bird : MonoBehaviour
     }
     private void OnEnable()
     {
-        EventManager.onPlayerDisable += PlayerDisable;
+        EventManager.onPlayerTouchGround += PlayerDisable;
+        EventManager.onPlayerHitWood += PlayBirdHitFx;    
     }
     private void OnDisable()
     {
-        EventManager.onPlayerDisable -= PlayerDisable;
+        EventManager.onPlayerTouchGround -= PlayerDisable;
+        EventManager.onPlayerHitWood -= PlayBirdHitFx;
     }
     void FixedUpdate()
     {
@@ -87,16 +104,24 @@ public class Bird : MonoBehaviour
     private void OnMouseDown()
     {
         spring.enabled = false;
-        clickedOn = true;               
+        clickedOn = true;
+
+        // Play Audio Fx
+        catapult.PlayCatapultStretchedFx();
     }
     private void OnMouseUp()
     {
         spring.enabled = true;
         clickedOn = false;
         rb2D.bodyType = RigidbodyType2D.Dynamic;
+
+        // Play Audio Fx
+        catapult.PlayCatapultReleasedFx();
+        PlayBirdFlyingFx();
     }
     #endregion
 
+    #region Player Movement
     void LineRendererSetup()
     {
         catapultBack.SetPosition(0, catapultBack.transform.position);
@@ -195,9 +220,55 @@ public class Bird : MonoBehaviour
                         rayToMouse.origin + rayToMouse.direction * rayDistance, 
                         Color.red);        
     }
+    #endregion
 
+    #region Player Disable
     void PlayerDisable()
     {
+        PlayBirdHitFx();
         Destroy(gameObject,1f);               
     }
+    #endregion
+
+    #region Audio Fx
+    private void PlayAudioFx(AudioSource audiousource, AudioClip audioClip)
+    {        
+        if (audiousource == null)
+        {
+            Debug.LogWarning("There is no Ref. of the Audio Source " + audiousource);
+            return;
+        }
+        else if (audioClip == null)
+        {            
+            Debug.LogWarning("There is no Ref. of the Audio Fx " + audioClip);
+            return;            
+        }
+        // If all the audio refs. are added. then we play the audio fx
+        audiousource.PlayOneShot(audioClip);
+    }    
+    public void PlayBirdFlyingFx()
+    {
+        PlayAudioFx(birdAudioSource, birdFlyingFx);
+    }
+    public void PlayBirdHitFx()
+    {
+        PlayAudioFx(birdAudioSource, birdHitFx);
+    }
+    #endregion
+
+    #region Animations
+    public void PLayDustAnimation(Vector2 hitPosition)
+    {
+        Vector3 dustPos = new Vector3(hitPosition.x, hitPosition.y,0);
+        GameObject dustInstance = Instantiate(dustEffect,dustPos,Quaternion.identity);
+        StartCoroutine(DestroyDustAnimation(dustInstance));
+    }
+    IEnumerator DestroyDustAnimation(GameObject prefab)
+    {
+        yield return new WaitForSeconds(1f);
+        if (prefab != null)
+            Destroy(prefab);
+    }
+    #endregion
+
 }

@@ -5,44 +5,79 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     [SerializeField] Transform player;
+    [SerializeField] Transform showLevelCamPos;
+    [SerializeField] Transform startGameCamPos;
     [SerializeField] float damping;    
+    [SerializeField] float initDamping;    
 
     private float cameraDistance;
     private float yCamPos;
     private float xCamPos;
     private float zCamPos;
 
-    private bool bEnableUpdatePos;
+    private bool bEnableFollowPlayerPos;    
+    private bool bEnableGoToEndCamPos;    
 
     private void Awake()
     {
+        // Set the initial Cam Position to thow the level
+        transform.position = showLevelCamPos.position;
+
         // Set the Z and Y Cam Positions
         zCamPos = Camera.main.transform.position.z;
         yCamPos = Camera.main.transform.position.y;
         xCamPos = Camera.main.transform.position.x;
+
+        // Set the initial Boolean flags values
+        bEnableFollowPlayerPos = false;
+        bEnableGoToEndCamPos = false;
     }
     private void OnEnable()
     {
-        EventManager.onTriggerCamMove += EnableUpdateCamPos;
+        EventManager.onTriggerCamMove += EnableFollowPlayerPos;
+        EventManager.onStartLevel += EnableGoToInitCamPos;
     }
     private void OnDisable()
     {
-        EventManager.onTriggerCamMove -= EnableUpdateCamPos;
+        EventManager.onTriggerCamMove -= EnableFollowPlayerPos;
+        EventManager.onStartLevel -= EnableGoToInitCamPos;
     }
     // Start is called before the first frame update
-    void FixedUpdate()
+    void Update()
     {
-       if (bEnableUpdatePos)
-            UpdateCamPos();
-        MoveCamera();        
+        // Set the corresponding Target Camera position
+        if (bEnableFollowPlayerPos)
+            FollowPlayerCamPos();
+        else if (bEnableGoToEndCamPos)
+            GoToEndLevelCamPos();
+
+        // Camera movement to target position
+        MoveCamera();
+
+        // Check if the end position will be reached soon
+        if (bEnableFollowPlayerPos)
+            CheckReachedPosition();
     }
-    void UpdateCamPos()
+    void FollowPlayerCamPos()
     {
         xCamPos = player.position.x;        
     }
-    void EnableUpdateCamPos()
+    void GoToEndLevelCamPos()
     {
-        bEnableUpdatePos = true;
+        xCamPos = showLevelCamPos.position.x;
+    }
+    void EnableFollowPlayerPos()
+    {
+        bEnableFollowPlayerPos = true;
+    }
+    void EnableGoToInitCamPos()
+    {                
+        StartCoroutine(nameof(SetCamToInitPos));
+    }
+    private IEnumerator SetCamToInitPos()
+    {
+        yield return new WaitForSeconds(2f);
+        xCamPos = startGameCamPos.position.x;
     }
     void MoveCamera()
     {
@@ -50,4 +85,12 @@ public class CameraFollow : MonoBehaviour
         Vector3 desiredPosition = new Vector3(xCamPos, yCamPos, zCamPos);
         transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * damping);
     }    
+    void CheckReachedPosition()
+    {
+        if (transform.position.x >= showLevelCamPos.position.x - 5f)
+        {
+            bEnableFollowPlayerPos = false;
+            bEnableGoToEndCamPos = true;
+        }
+    }
 }
