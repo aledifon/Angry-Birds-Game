@@ -91,8 +91,17 @@ public class GameManager : MonoBehaviour
 
                     break;
                 case Scenes.Level1:
+
+                    // Stop Intro Song
+                    gameAudioSource.Stop();
+
+                    // Play Audio Fx
+                    PlayStartLevelFx();
+
+                    // Start the level
+                    EventManager.StartLevel();
                     break;
-                    default:
+                default:
                 break;
             }
         }
@@ -113,15 +122,13 @@ public class GameManager : MonoBehaviour
     public void OnStartGameClick()
     {        
         // Disable the Title Panel
-        titlePanel.SetActive(false);
-        // Start the Level
-        EventManager.StartLevel();
+        //titlePanel.SetActive(false);
 
-        StartCoroutine(nameof(StartGameAfterDelay));        
+        SceneManager.LoadScene(Scenes.Level1.ToString());
     }
     #endregion
 
-    #region Level Management
+    #region Level Management    
     private void LevelStart()
     {        
         // Play Audio Fx
