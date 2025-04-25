@@ -23,6 +23,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Ref. to the Player Refs.
+    [SerializeField] private PlayerDependencies playerDependencies;
+
     // Audio
     AudioSource gameAudioSource;
     [SerializeField] AudioClip startLevelClip;

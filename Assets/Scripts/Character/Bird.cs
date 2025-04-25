@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Bird : MonoBehaviour
-{
-    [SerializeField] float maxStretch;  // Max stretching distance   
-
-    [Header("Line Renderers")]
-    [SerializeField] LineRenderer catapultFront;
-    [SerializeField] LineRenderer catapultBack;
+{        
+    // Catapult Refs.
+    private LineRenderer catapultFrontLR;
+    private LineRenderer catapultBackLR;
+    private Rigidbody2D catapultRb2D;
+    [Header("Catapult Ref")]
+    private Catapult catapult;
 
     // GO Components
     SpringJoint2D spring;
@@ -21,23 +22,10 @@ public class Bird : MonoBehaviour
     float circleRadius;         // Collider radius
     bool clickedOn;             // To know if the player has clicked over the bird
 
-    [Header("Catapult Ref")]
-    [SerializeField] Catapult catapult;
-
     [Header("Audio Refs")]    
     AudioSource birdAudioSource;
 
-    [SerializeField] PlayerData playerData;
-
-    //[Header("Audio Clips")]    
-    //[SerializeField] AudioClip birdFlyingFx;
-    //[SerializeField] AudioClip birdHitFx;
-
-    //[Header("Ground Layer")]
-    //[SerializeField] LayerMask groundLayer;
-
-    //[Header("Dust Effect")]
-    //[SerializeField] GameObject dustEffect;
+    private PlayerData playerData;    
 
     #region Unity API
     private void Awake()
@@ -51,8 +39,8 @@ public class Bird : MonoBehaviour
         LineRendererSetup();
 
         // Initial Raycasts Positions (direction will be set afterwards)
-        rayToMouse = new Ray(catapultBack.transform.position, Vector3.zero);
-        leftCatapultToBird = new Ray(catapultFront.transform.position, Vector3.zero);
+        rayToMouse = new Ray(catapultBackLR.transform.position, Vector3.zero);
+        leftCatapultToBird = new Ray(catapultFrontLR.transform.position, Vector3.zero);
         circleRadius = GetComponent<CircleCollider2D>().radius;
     }
     private void OnEnable()
@@ -97,8 +85,8 @@ public class Bird : MonoBehaviour
         else
         {
             // If I arrive here the bird has already flown
-            catapultBack.enabled = false;
-            catapultFront.enabled = false;
+            catapultBackLR.enabled = false;
+            catapultFrontLR.enabled = false;
         }
     }    
 
@@ -107,6 +95,9 @@ public class Bird : MonoBehaviour
     {
         spring.enabled = false;
         clickedOn = true;
+
+        // Assign the Rigidbody2D to the Connected Body of the Spring Joint 2D Component
+        spring.connectedBody = catapultRb2D;
 
         // Play Audio Fx
         catapult.PlayCatapultStretchedFx();
@@ -126,8 +117,8 @@ public class Bird : MonoBehaviour
     #region Player Movement
     void LineRendererSetup()
     {
-        catapultBack.SetPosition(0, catapultBack.transform.position);
-        catapultFront.SetPosition(0, catapultFront.transform.position);
+        catapultBackLR.SetPosition(0, catapultBackLR.transform.position);
+        catapultFrontLR.SetPosition(0, catapultFrontLR.transform.position);
 
         //catapultBack.SetPosition(1, catapultBack.transform.position);
         //catapultFront.SetPosition(1, catapultFront.transform.position);
@@ -135,7 +126,7 @@ public class Bird : MonoBehaviour
     void LineRendererUpdate()
     {
         // Vector goes from the front catapult to the bird position
-        Vector2 catapultToBird = transform.position - catapultFront.transform.position;
+        Vector2 catapultToBird = transform.position - catapultFrontLR.transform.position;
         // Assign the same dir. vector to the raycast
         leftCatapultToBird.direction = catapultToBird;
 
@@ -145,8 +136,8 @@ public class Bird : MonoBehaviour
         endRopePosition.z = -1; // To keep the rendering order
         
         // Setting the Line Renderers End points
-        catapultFront.SetPosition(1, endRopePosition);
-        catapultBack.SetPosition(1, endRopePosition);
+        catapultFrontLR.SetPosition(1, endRopePosition);
+        catapultBackLR.SetPosition(1, endRopePosition);
     }
     // Update the bird pos. when I'm dragging him along the screen
     //void Dragging_B()
@@ -189,17 +180,17 @@ public class Bird : MonoBehaviour
         // Calculate the Touched Screen Position on World space coordinates.
         Vector3 mouseWorldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         // Vector from the Back Catapult Init Point to the Touched screen point
-        Vector2 catapultToMouse = mouseWorldPoint - catapultBack.transform.position;
+        Vector2 catapultToMouse = mouseWorldPoint - catapultBackLR.transform.position;
 
         // Set the raycast clamped distance and the Raycast direction
-        float rayDistance = Mathf.Clamp(catapultToMouse.magnitude, 0, maxStretch);
+        float rayDistance = Mathf.Clamp(catapultToMouse.magnitude, 0, playerData.MaxStretch);
         Vector2 rayDirection = catapultToMouse.normalized;
 
         // Raycast Launching
         RaycastHit2D hit = Physics2D.Raycast(rayToMouse.origin,
                                             rayDirection,
                                             rayDistance,
-                                            groundLayer);        
+                                            playerData.GroundLayer);        
 
         // Floor detected --> Mouse Pos. = Floor pos.
         if (hit.collider != null)
@@ -208,10 +199,10 @@ public class Bird : MonoBehaviour
             Debug.Log("Im hitting on the Gameobject" + hit.collider.gameObject);
         }
         // Max. Distance Reached --> Mouse Pos. = Point along the Raycast at Max Stretch Distance
-        else if (catapultToMouse.magnitude > maxStretch)
+        else if (catapultToMouse.magnitude > playerData.MaxStretch)
         {       
             rayToMouse.direction = rayDirection;                    // Needed to be assigned to can use Ray.GetPoint() afterwards                                                                        
-            mouseWorldPoint = rayToMouse.GetPoint(maxStretch);            
+            mouseWorldPoint = rayToMouse.GetPoint(playerData.MaxStretch);            
         }        
         // Update the new Bird Position (Reset Z-Axis to avoid problems)
         mouseWorldPoint.z = 0;
@@ -250,11 +241,11 @@ public class Bird : MonoBehaviour
     }    
     public void PlayBirdFlyingFx()
     {
-        PlayAudioFx(birdAudioSource, birdFlyingFx);
+        PlayAudioFx(birdAudioSource, playerData.BirdFlyingFx);
     }
     public void PlayBirdHitFx()
     {
-        PlayAudioFx(birdAudioSource, birdHitFx);
+        PlayAudioFx(birdAudioSource, playerData.BirdHitFx);
     }
     #endregion
 
@@ -262,7 +253,7 @@ public class Bird : MonoBehaviour
     public void PLayDustAnimation(Vector2 hitPosition)
     {
         Vector3 dustPos = new Vector3(hitPosition.x, hitPosition.y,0);
-        GameObject dustInstance = Instantiate(dustEffect,dustPos,Quaternion.identity);
+        GameObject dustInstance = Instantiate(playerData.DustEffect,dustPos,Quaternion.identity);
         StartCoroutine(DestroyDustAnimation(dustInstance));
     }
     IEnumerator DestroyDustAnimation(GameObject prefab)
@@ -273,4 +264,13 @@ public class Bird : MonoBehaviour
     }
     #endregion
 
+    #region Dependency Injection
+    public void SetDependencies(Catapult catapult, LineRenderer catapultFrontLR, LineRenderer catapultBackLR, Rigidbody2D catapultRb2D)
+    {
+        this.catapult = catapult;
+        this.catapultFrontLR = catapultFrontLR;
+        this.catapultBackLR = catapultBackLR;
+        this.catapultRb2D = catapultRb2D;
+    }    
+    #endregion
 }
