@@ -22,6 +22,9 @@ public class EventManager : MonoBehaviour
     public delegate void OnStartLevel();
     public static event OnStartLevel onStartLevel;
 
+    public delegate void OnRestartLevel();
+    public static event OnRestartLevel onRestartLevel;
+
     public static void TriggerCamMoveEvent()
     {
         onTriggerCamMove?.Invoke();
@@ -41,6 +44,10 @@ public class EventManager : MonoBehaviour
     public static void StartLevel()
     {
         onStartLevel?.Invoke();
+    }
+    public static void RestartLevel()
+    {
+        onRestartLevel?.Invoke();
     }
     public static void SetLevelReferences()
     {

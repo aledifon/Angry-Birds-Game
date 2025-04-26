@@ -281,13 +281,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61baddbb5c77b174d8c29215d284b92e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxStretch: 3
-  catapultFront: {fileID: 0}
-  catapultBack: {fileID: 0}
-  catapult: {fileID: 0}
-  birdFlyingFx: {fileID: 8300000, guid: 604d7d21446fbb14fb78a7966a48c780, type: 3}
-  birdHitFx: {fileID: 8300000, guid: c68c2c4cc1faf0744a40f317e7c7af94, type: 3}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  dustEffect: {fileID: 3768520428415398985, guid: 7b22ee9bb0fbfcc44b82d9b26bcf9f2e, type: 3}
+  playerData: {fileID: 11400000, guid: 5be541ea8bdd1e44f99cdef09cd79193, type: 2}

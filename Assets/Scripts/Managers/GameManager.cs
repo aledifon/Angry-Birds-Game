@@ -256,19 +256,19 @@ public class GameManager : MonoBehaviour
         // If all the audio refs. are added. then we play the audio fx
         audiousource.PlayOneShot(audioClip);
     }
-    private void PlayStartLevelFx()
+    public void PlayStartLevelFx()
     {
         PlayAudioFx(gameAudioSource, startLevelClip);
     }
-    private void PlayWinLevelFx()
+    public void PlayWinLevelFx()
     {
         PlayAudioFx(gameAudioSource, winLevelClip);
     }
-    private void PlayFailLevelFx()
+    public void PlayFailLevelFx()
     {
         PlayAudioFx(gameAudioSource, failLevelClip);
     }
-    private void PlayMainTitleAudioClip()
+    public void PlayMainTitleAudioClip()
     {
         PlayAudioFx(gameAudioSource, mainTitleAudioClip);
     }

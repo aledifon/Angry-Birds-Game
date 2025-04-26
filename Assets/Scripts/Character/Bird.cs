@@ -17,6 +17,8 @@ public class Bird : MonoBehaviour
     // GO Components
     SpringJoint2D spring;
     Rigidbody2D rb2D;
+    SpriteRenderer sprite;
+    CircleCollider2D collider2D;
 
     Ray rayToMouse;
     Ray leftCatapultToBird;
@@ -28,7 +30,7 @@ public class Bird : MonoBehaviour
     [Header("Audio Refs")]    
     AudioSource birdAudioSource;
 
-    private PlayerData playerData;    
+    [SerializeField] private PlayerData playerData;    
 
     #region Unity API
     private void Awake()
@@ -36,6 +38,9 @@ public class Bird : MonoBehaviour
         spring = GetComponent<SpringJoint2D>();
         rb2D = GetComponent<Rigidbody2D>();
         birdAudioSource = GetComponent<AudioSource>();
+
+        sprite = GetComponent<SpriteRenderer>();
+        collider2D = GetComponent<CircleCollider2D>();
     }
     void Start()
     {
@@ -72,32 +77,37 @@ public class Bird : MonoBehaviour
         // the continuously know the mouse pos. on world space coord.
 
         if (clickedOn)        
-            Dragging();        
-        
-        if(spring != null)
+            Dragging();
+
+        //if(spring != null)
+        if (spring.enabled)
         {
             // If the Rb is not kinematic and the Prev. Frame Velocity > Current Frame Velocity
             // --> Destroy the Spring Joint Component
             if(!rb2D.isKinematic && (prevVelocity.magnitude > rb2D.velocity.magnitude))
-            {                
-                //spring.connectedBody = null;
+            {                                
                 //Destroy(spring);
                 spring.enabled = false;
                 rb2D.velocity = prevVelocity;
-                // Set Game Feeling (Audio)
+
+                // If I arrive here the bird has already flown
+                catapultBackLR.enabled = false;
+                catapultFrontLR.enabled = false;
             }
             // Save the current value of the RigidBody Bird Velocity
             if (!clickedOn)                                            
                 prevVelocity = rb2D.velocity;
             
-            LineRendererUpdate();
+            //LineRendererUpdate();
         }
-        else
-        {
-            // If I arrive here the bird has already flown
-            catapultBackLR.enabled = false;
-            catapultFrontLR.enabled = false;
-        }
+        //else
+        //{
+        //    // If I arrive here the bird has already flown
+        //    catapultBackLR.enabled = false;
+        //    catapultFrontLR.enabled = false;
+        //}
+
+        LineRendererUpdate();
     }    
 
     // Also detected on tactile screen
@@ -247,11 +257,18 @@ public class Bird : MonoBehaviour
     IEnumerator PlayerReset()
     {
         yield return new WaitForSeconds(2f);
-        // Disable the Player 
-        gameObject.SetActive(false);
+        // Disable the Sprite & 2D Collider of the Player 
+        sprite.enabled = false;
+        collider2D.enabled = false;
 
-        yield return new WaitForSeconds(2f);        
-        // Update the PLayer's Sprite positions
+        // Play the Win (or Fail) Level Fx and wait for 3s
+        GameManager.Instance.PlayWinLevelFx();
+        yield return new WaitForSeconds(3f);
+
+        // Update the other Players (Lifes) Sprite positions
+
+        // Trigger the Restart Level Event
+        EventManager.RestartLevel();
 
         // Setup the Player's config & Catapult again
         ResetPlayerSetup();        
@@ -263,8 +280,9 @@ public class Bird : MonoBehaviour
 
         // Set the Player's Rb as Kinematic again
         rb2D.bodyType = RigidbodyType2D.Kinematic;
-        // Set the Player's Rb Velocity to zero
+        // Set the Player's Rb Velocities to zero
         rb2D.velocity = Vector2.zero;
+        rb2D.angularVelocity = 0f;
 
         // Connect the Catapult Rb to the Spring Joint 2D Component
         spring.connectedBody = catapultRb2D;
@@ -275,8 +293,12 @@ public class Bird : MonoBehaviour
         catapultBackLR.enabled = true;
         catapultFrontLR.enabled = true;
 
-        // Enable again the Player 
-        gameObject.SetActive(true);
+        // Enable again the Sprite & the 2D Collider of the Player         
+        sprite.enabled = enabled;
+        collider2D.enabled = enabled;
+
+        //// Set the Player's Rb Velocity to zero
+        //rb2D.velocity = Vector2.zero;
     }
     #endregion
 

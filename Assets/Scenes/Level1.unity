@@ -1127,7 +1127,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cff60e5bf6fdf944c9884293d7a70582, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerDependencies: {fileID: 375522050}
   startLevelClip: {fileID: 8300000, guid: fcc980a949064444cb590478b59b6939, type: 3}
   winLevelClip: {fileID: 8300000, guid: c4431481bf215414985617f68e6391f1, type: 3}
   failLevelClip: {fileID: 8300000, guid: 6e2e3de55192b854fa4cb04166da4b9a, type: 3}
@@ -2825,30 +2824,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 965319612980605771, guid: c77419f952db90c46922088ed5b3bc91, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2161086944383331473, guid: c77419f952db90c46922088ed5b3bc91, type: 3}
       propertyPath: m_Name
       value: Bird - Player
       objectReference: {fileID: 0}
-    - target: {fileID: 2161086944383331473, guid: c77419f952db90c46922088ed5b3bc91, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7348068426354900065, guid: c77419f952db90c46922088ed5b3bc91, type: 3}
-      propertyPath: catapult
-      value: 
-      objectReference: {fileID: 1895801124}
-    - target: {fileID: 7348068426354900065, guid: c77419f952db90c46922088ed5b3bc91, type: 3}
-      propertyPath: catapultBack
-      value: 
-      objectReference: {fileID: 1895801121}
-    - target: {fileID: 7348068426354900065, guid: c77419f952db90c46922088ed5b3bc91, type: 3}
-      propertyPath: catapultFront
-      value: 
-      objectReference: {fileID: 787386214}
     - target: {fileID: 8210399468862903103, guid: c77419f952db90c46922088ed5b3bc91, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.439
@@ -2893,6 +2872,10 @@ PrefabInstance:
       propertyPath: m_ConnectedRigidBody
       value: 
       objectReference: {fileID: 1895801122}
+    - target: {fileID: 9147739976782307060, guid: c77419f952db90c46922088ed5b3bc91, type: 3}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

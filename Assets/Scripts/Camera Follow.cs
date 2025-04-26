@@ -15,8 +15,7 @@ public class CameraFollow : MonoBehaviour
     private float xCamPos;
     private float zCamPos;
 
-    private bool bEnableFollowPlayerPos;    
-    private bool bEnableGoToEndCamPos;    
+    private bool bEnableFollowPlayerPos;           
 
     private void Awake()
     {
@@ -29,27 +28,26 @@ public class CameraFollow : MonoBehaviour
         xCamPos = Camera.main.transform.position.x;
 
         // Set the initial Boolean flags values
-        bEnableFollowPlayerPos = false;
-        bEnableGoToEndCamPos = false;
+        bEnableFollowPlayerPos = false;        
     }
     private void OnEnable()
     {
         EventManager.onTriggerCamMove += EnableFollowPlayerPos;
         EventManager.onStartLevel += EnableGoToInitCamPos;
+        EventManager.onRestartLevel += EnableGoToInitCamPos;
     }
     private void OnDisable()
     {
         EventManager.onTriggerCamMove -= EnableFollowPlayerPos;
         EventManager.onStartLevel -= EnableGoToInitCamPos;
+        EventManager.onRestartLevel -= EnableGoToInitCamPos;
     }
     // Start is called before the first frame update
     void Update()
     {
         // Set the corresponding Target Camera position
         if (bEnableFollowPlayerPos)
-            FollowPlayerCamPos();
-        else if (bEnableGoToEndCamPos)
-            GoToEndLevelCamPos();
+            FollowPlayerCamPos();        
 
         // Camera movement to target position
         MoveCamera();
@@ -62,7 +60,7 @@ public class CameraFollow : MonoBehaviour
     {
         xCamPos = player.position.x;        
     }
-    void GoToEndLevelCamPos()
+    void SetEndLevelTargetPos()
     {
         xCamPos = showLevelCamPos.position.x;
     }
@@ -90,7 +88,7 @@ public class CameraFollow : MonoBehaviour
         if (transform.position.x >= showLevelCamPos.position.x - 5f)
         {
             bEnableFollowPlayerPos = false;
-            bEnableGoToEndCamPos = true;
+            SetEndLevelTargetPos();
         }
     }
 }
