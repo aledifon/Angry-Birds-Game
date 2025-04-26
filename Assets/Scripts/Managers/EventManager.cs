@@ -7,14 +7,17 @@ public class EventManager : MonoBehaviour
     public delegate void OnTriggerCamMove();                  // Delegate Template
     public static event OnTriggerCamMove onTriggerCamMove;     // Event
 
-    public delegate void OnPlayerDepsInjected();
-    public static event OnPlayerDepsInjected onPlayerDepsInjected;
+    public delegate void OnPlayerInitialSetup();
+    public static event OnPlayerInitialSetup onPlayerInitialSetup;
 
     public delegate void OnPlayerTouchGround();
     public static event OnPlayerTouchGround onPlayerTouchGround;
 
     public delegate void OnPlayerHitWood();
     public static event OnPlayerHitWood onPlayerHitWood;
+
+    public delegate void OnSetLevelReferences();
+    public static event OnSetLevelReferences onSetLevelReferences;
 
     public delegate void OnStartLevel();
     public static event OnStartLevel onStartLevel;
@@ -31,12 +34,16 @@ public class EventManager : MonoBehaviour
     {
         onPlayerHitWood?.Invoke();
     }
-    public static void PlayerDepsInjected()
+    public static void PlayerInitialSetup()
     {
-        onPlayerDepsInjected?.Invoke();
+        onPlayerInitialSetup?.Invoke();
     }
     public static void StartLevel()
     {
         onStartLevel?.Invoke();
+    }
+    public static void SetLevelReferences()
+    {
+        onSetLevelReferences?.Invoke();
     }
 }

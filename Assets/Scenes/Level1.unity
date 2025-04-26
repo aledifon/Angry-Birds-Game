@@ -614,7 +614,7 @@ GameObject:
   - component: {fileID: 375522049}
   - component: {fileID: 375522050}
   m_Layer: 0
-  m_Name: PlayerDependencies
+  m_Name: GameDependencies
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -647,7 +647,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2e58ca417476d248b18d74f750379f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPos: {fileID: 1665560132}
+  player: {fileID: 8383650207644119987}
+  startPlayerPos: {fileID: 1665560132}
   catapult: {fileID: 1895801124}
   catapultFrontLineRenderer: {fileID: 787386214}
   catapultBackLineRenderer: {fileID: 1895801121}
@@ -1127,7 +1128,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerDependencies: {fileID: 375522050}
-  player: {fileID: 8383650207644119987}
   startLevelClip: {fileID: 8300000, guid: fcc980a949064444cb590478b59b6939, type: 3}
   winLevelClip: {fileID: 8300000, guid: c4431481bf215414985617f68e6391f1, type: 3}
   failLevelClip: {fileID: 8300000, guid: 6e2e3de55192b854fa4cb04166da4b9a, type: 3}
@@ -2935,10 +2935,10 @@ SceneRoots:
   - {fileID: 1744967634}
   - {fileID: 8383650207644119986}
   - {fileID: 1665560132}
-  - {fileID: 822213109}
-  - {fileID: 581539930}
   - {fileID: 324350679}
   - {fileID: 375522049}
   - {fileID: 7822159}
   - {fileID: 481646035}
   - {fileID: 989699985}
+  - {fileID: 822213109}
+  - {fileID: 581539930}

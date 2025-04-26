@@ -25,10 +25,8 @@ public class GameManager : MonoBehaviour
     }
 
     // Ref. to the Player Refs.
-    [SerializeField] private PlayerDependencies playerDependencies;
-    // Ref. to the Player
-    [SerializeField] private Bird player;
-
+    public GameDependencies Dependencies { get; private set; }
+    public Bird Player { get; private set; }
     // Audio
     AudioSource gameAudioSource;
     [SerializeField] AudioClip startLevelClip;
@@ -105,8 +103,8 @@ public class GameManager : MonoBehaviour
                     // Set the Canvas Panels Initial State
                     SetCanvasPanelsState();
 
-                    // Start the level
-                    EventManager.StartLevel();
+                    // Trigger the Level Reference Setting Event
+                    EventManager.SetLevelReferences();
                     break;
                 default:
                 break;
@@ -223,9 +221,14 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Level Management    
+    public void SetLeveLReferences(Bird player, GameDependencies dependencies)
+    {
+        this.Player = player;
+        this.Dependencies = dependencies;                
+    }
     private void LevelStart()
     {
-        playerDependencies.InjectDependencies(player);
+        Dependencies.InjectPlayerDependencies();
     }
     private void LevelWin()
     {

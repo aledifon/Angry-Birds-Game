@@ -50,17 +50,17 @@ public class Bird : MonoBehaviour
     {
         EventManager.onPlayerTouchGround += PlayerTouchGround;
         EventManager.onPlayerHitWood += PlayBirdHitFx;    
-        EventManager.onPlayerDepsInjected += LineRendererSetup;
-        EventManager.onPlayerDepsInjected += RaycastSetup;
-        EventManager.onPlayerDepsInjected += ResetPlayerSetup;
+        EventManager.onPlayerInitialSetup += LineRendererSetup;
+        EventManager.onPlayerInitialSetup += RaycastSetup;
+        EventManager.onPlayerInitialSetup += ResetPlayerSetup;
     }
     private void OnDisable()
     {
         EventManager.onPlayerTouchGround -= PlayerTouchGround;
         EventManager.onPlayerHitWood -= PlayBirdHitFx;
-        EventManager.onPlayerDepsInjected -= LineRendererSetup;
-        EventManager.onPlayerDepsInjected -= RaycastSetup;
-        EventManager.onPlayerDepsInjected -= ResetPlayerSetup;
+        EventManager.onPlayerInitialSetup -= LineRendererSetup;
+        EventManager.onPlayerInitialSetup -= RaycastSetup;
+        EventManager.onPlayerInitialSetup -= ResetPlayerSetup;
     }
     void FixedUpdate()
     {
