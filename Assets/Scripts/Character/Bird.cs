@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Bird : MonoBehaviour
-{        
+{
+    // Pos. Refs
+    private Transform startPos;
+
     // Catapult Refs.
     private LineRenderer catapultFrontLR;
     private LineRenderer catapultBackLR;
@@ -36,22 +39,28 @@ public class Bird : MonoBehaviour
     }
     void Start()
     {
-        LineRendererSetup();
+        //LineRendererSetup();  --> Will be called from GameManager to pass it the Player Dependencies
 
         // Initial Raycasts Positions (direction will be set afterwards)
-        rayToMouse = new Ray(catapultBackLR.transform.position, Vector3.zero);
-        leftCatapultToBird = new Ray(catapultFrontLR.transform.position, Vector3.zero);
+        //rayToMouse = new Ray(catapultBackLR.transform.position, Vector3.zero);
+        //leftCatapultToBird = new Ray(catapultFrontLR.transform.position, Vector3.zero);
         circleRadius = GetComponent<CircleCollider2D>().radius;
     }
     private void OnEnable()
     {
-        EventManager.onPlayerTouchGround += PlayerDisable;
+        EventManager.onPlayerTouchGround += PlayerTouchGround;
         EventManager.onPlayerHitWood += PlayBirdHitFx;    
+        EventManager.onPlayerDepsInjected += LineRendererSetup;
+        EventManager.onPlayerDepsInjected += RaycastSetup;
+        EventManager.onPlayerDepsInjected += ResetPlayerSetup;
     }
     private void OnDisable()
     {
-        EventManager.onPlayerTouchGround -= PlayerDisable;
+        EventManager.onPlayerTouchGround -= PlayerTouchGround;
         EventManager.onPlayerHitWood -= PlayBirdHitFx;
+        EventManager.onPlayerDepsInjected -= LineRendererSetup;
+        EventManager.onPlayerDepsInjected -= RaycastSetup;
+        EventManager.onPlayerDepsInjected -= ResetPlayerSetup;
     }
     void FixedUpdate()
     {
@@ -70,16 +79,17 @@ public class Bird : MonoBehaviour
             // If the Rb is not kinematic and the Prev. Frame Velocity > Current Frame Velocity
             // --> Destroy the Spring Joint Component
             if(!rb2D.isKinematic && (prevVelocity.magnitude > rb2D.velocity.magnitude))
-            {
+            {                
                 //spring.connectedBody = null;
-                Destroy(spring);
+                //Destroy(spring);
+                spring.enabled = false;
                 rb2D.velocity = prevVelocity;
                 // Set Game Feeling (Audio)
             }
             // Save the current value of the RigidBody Bird Velocity
             if (!clickedOn)                                            
                 prevVelocity = rb2D.velocity;
-
+            
             LineRendererUpdate();
         }
         else
@@ -94,10 +104,7 @@ public class Bird : MonoBehaviour
     private void OnMouseDown()
     {
         spring.enabled = false;
-        clickedOn = true;
-
-        // Assign the Rigidbody2D to the Connected Body of the Spring Joint 2D Component
-        spring.connectedBody = catapultRb2D;
+        clickedOn = true;        
 
         // Play Audio Fx
         catapult.PlayCatapultStretchedFx();
@@ -114,31 +121,43 @@ public class Bird : MonoBehaviour
     }
     #endregion
 
-    #region Player Movement
+    #region Raycast Setup Methods
+    private void RaycastSetup()
+    {
+        // Initial Raycasts Positions (direction will be set afterwards)
+        rayToMouse = new Ray(catapultBackLR.transform.position, Vector3.zero);
+        leftCatapultToBird = new Ray(catapultFrontLR.transform.position, Vector3.zero);
+    }
+    #endregion
+
+    #region Line Renderer Methods
     void LineRendererSetup()
     {
         catapultBackLR.SetPosition(0, catapultBackLR.transform.position);
         catapultFrontLR.SetPosition(0, catapultFrontLR.transform.position);
-
-        //catapultBack.SetPosition(1, catapultBack.transform.position);
-        //catapultFront.SetPosition(1, catapultFront.transform.position);
     }
     void LineRendererUpdate()
     {
-        // Vector goes from the front catapult to the bird position
-        Vector2 catapultToBird = transform.position - catapultFrontLR.transform.position;
-        // Assign the same dir. vector to the raycast
-        leftCatapultToBird.direction = catapultToBird;
+        if (catapultBackLR != null && catapultFrontLR != null && leftCatapultToBird.origin != Vector3.zero)
+        {
+            // Vector goes from the front catapult to the bird position
+            Vector2 catapultToBird = transform.position - catapultFrontLR.transform.position;
+            // Assign the same dir. vector to the raycast
+            leftCatapultToBird.direction = catapultToBird;
 
-        // Get a point along the raycast whose value = Vector.magnitude + BirdCollider.radius
-        // "Point just behind the bird"
-        Vector3 endRopePosition = leftCatapultToBird.GetPoint(catapultToBird.magnitude + circleRadius);
-        endRopePosition.z = -1; // To keep the rendering order
-        
-        // Setting the Line Renderers End points
-        catapultFrontLR.SetPosition(1, endRopePosition);
-        catapultBackLR.SetPosition(1, endRopePosition);
+            // Get a point along the raycast whose value = Vector.magnitude + BirdCollider.radius
+            // "Point just behind the bird"
+            Vector3 endRopePosition = leftCatapultToBird.GetPoint(catapultToBird.magnitude + circleRadius);
+            endRopePosition.z = -1; // To keep the rendering order
+
+            // Setting the Line Renderers End points
+            catapultFrontLR.SetPosition(1, endRopePosition);
+            catapultBackLR.SetPosition(1, endRopePosition);
+        }
     }
+    #endregion
+
+    #region Player Movement
     // Update the bird pos. when I'm dragging him along the screen
     //void Dragging_B()
     //{
@@ -215,11 +234,49 @@ public class Bird : MonoBehaviour
     }
     #endregion
 
-    #region Player Disable
-    void PlayerDisable()
+    #region Touch Ground Event
+    void PlayerTouchGround()
     {
         PlayBirdHitFx();
-        Destroy(gameObject,1f);               
+        // Launch Player Reset Coroutine
+        StartCoroutine(nameof(PlayerReset));
+    }
+    #endregion
+
+    #region Player Setup
+    IEnumerator PlayerReset()
+    {
+        yield return new WaitForSeconds(2f);
+        // Disable the Player 
+        gameObject.SetActive(false);
+
+        yield return new WaitForSeconds(2f);        
+        // Update the PLayer's Sprite positions
+
+        // Setup the Player's config & Catapult again
+        ResetPlayerSetup();        
+    }
+    void ResetPlayerSetup()
+    {
+        // Move the player again to the Start Game Position
+        transform.position = startPos.position;
+
+        // Set the Player's Rb as Kinematic again
+        rb2D.bodyType = RigidbodyType2D.Kinematic;
+        // Set the Player's Rb Velocity to zero
+        rb2D.velocity = Vector2.zero;
+
+        // Connect the Catapult Rb to the Spring Joint 2D Component
+        spring.connectedBody = catapultRb2D;
+        // Enable the Spring Joint 2D
+        spring.enabled = true;
+
+        // Re-enable again the Catapult Line Renderers
+        catapultBackLR.enabled = true;
+        catapultFrontLR.enabled = true;
+
+        // Enable again the Player 
+        gameObject.SetActive(true);
     }
     #endregion
 
@@ -265,12 +322,13 @@ public class Bird : MonoBehaviour
     #endregion
 
     #region Dependency Injection
-    public void SetDependencies(Catapult catapult, LineRenderer catapultFrontLR, LineRenderer catapultBackLR, Rigidbody2D catapultRb2D)
+    public void SetDependencies(Catapult catapult, LineRenderer catapultFrontLR, LineRenderer catapultBackLR, Rigidbody2D catapultRb2D, Transform startPos)
     {
         this.catapult = catapult;
         this.catapultFrontLR = catapultFrontLR;
         this.catapultBackLR = catapultBackLR;
         this.catapultRb2D = catapultRb2D;
+        this.startPos = startPos;
     }    
     #endregion
 }

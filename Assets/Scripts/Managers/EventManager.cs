@@ -7,6 +7,9 @@ public class EventManager : MonoBehaviour
     public delegate void OnTriggerCamMove();                  // Delegate Template
     public static event OnTriggerCamMove onTriggerCamMove;     // Event
 
+    public delegate void OnPlayerDepsInjected();
+    public static event OnPlayerDepsInjected onPlayerDepsInjected;
+
     public delegate void OnPlayerTouchGround();
     public static event OnPlayerTouchGround onPlayerTouchGround;
 
@@ -27,6 +30,10 @@ public class EventManager : MonoBehaviour
     public static void PlayerHitWood()
     {
         onPlayerHitWood?.Invoke();
+    }
+    public static void PlayerDepsInjected()
+    {
+        onPlayerDepsInjected?.Invoke();
     }
     public static void StartLevel()
     {

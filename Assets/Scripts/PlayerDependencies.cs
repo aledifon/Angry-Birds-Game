@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class PlayerDependencies : MonoBehaviour
 {
-    [Header("Script")]
+    [Header("Start Game Position")]
+    [SerializeField] private Transform startPos;
+    [Header("Catapult Script")]
     [SerializeField] private Catapult catapult;
-    [Header("Line Renderers Refs")]
+    [Header("Catapult Line Renderers Refs")]
     [SerializeField] private LineRenderer catapultFrontLineRenderer;
     [SerializeField] private LineRenderer catapultBackLineRenderer;
-    [Header("RigidBody Ref.")]
+    [Header("Catapult RigidBody Ref.")]
     [SerializeField] private Rigidbody2D catapultRb2D;
 
     public void InjectDependencies(Bird bird)
     {
-        bird.SetDependencies(catapult,catapultFrontLineRenderer,catapultBackLineRenderer,catapultRb2D);
+        bird.SetDependencies(catapult,catapultFrontLineRenderer,catapultBackLineRenderer,catapultRb2D, startPos);
+        // Trigger the Player Dependencies Injected Event
+        EventManager.PlayerDepsInjected();
     }
 }

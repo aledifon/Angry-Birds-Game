@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class GameManager : MonoBehaviour
 
     // Ref. to the Player Refs.
     [SerializeField] private PlayerDependencies playerDependencies;
+    // Ref. to the Player
+    [SerializeField] private Bird player;
 
     // Audio
     AudioSource gameAudioSource;
@@ -59,17 +62,7 @@ public class GameManager : MonoBehaviour
         gameAudioSource = GetComponent<AudioSource>();        
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        //EventManager.StartLevel();
-
-        // Get the Canvas ref
-        canvas = GameObject.Find("Canvas");
-        if (canvas == null)
-        {
-            Debug.LogError("The " + canvas + " object is null");
-            return;
-        }                    
-
+    {        
         if (System.Enum.TryParse(SceneManager.GetActiveScene().name, out Scenes currentScene))
         {
             switch (currentScene)
@@ -78,28 +71,39 @@ public class GameManager : MonoBehaviour
                     // Set the new Scene as the current one
                     sceneSelected = Scenes.Menu;
 
-                    // Get the panels refs.
-                    titlePanel = canvas.transform.Find("TitlePanel")?.gameObject;
-                    if (titlePanel == null)
-                    {
-                        Debug.LogError("The " + titlePanel + " object is null");
+                    // Get the corresponding Canvas's Refs
+                    if(!GetCanvasRefs())
                         return;
-                    }
 
                     // Start playing Title Screen Audio
                     PlayMainTitleAudioClip();
 
-                    // Enable the TitlePanel Screen
-                    titlePanel.SetActive(true);
-
+                    // Set the Canvas Panels Initial State
+                    SetCanvasPanelsState();                    
                     break;
                 case Scenes.Level1:
+                case Scenes.Level2:
+                case Scenes.Level3:
+
+                    // Set the new Scene as the current one
+                    if (SceneManager.GetActiveScene().name == Scenes.Level1.ToString())
+                        sceneSelected = Scenes.Level1;
+                    if (SceneManager.GetActiveScene().name == Scenes.Level2.ToString())
+                        sceneSelected = Scenes.Level2;
+                    if (SceneManager.GetActiveScene().name == Scenes.Level3.ToString())
+                        sceneSelected = Scenes.Level3;
+
+                    // Get the corresponding Canvas's Refs
+                    if (!GetCanvasRefs())
+                        return;
 
                     // Stop Intro Song
                     gameAudioSource.Stop();
-
                     // Play Audio Fx
                     PlayStartLevelFx();
+
+                    // Set the Canvas Panels Initial State
+                    SetCanvasPanelsState();
 
                     // Start the level
                     EventManager.StartLevel();
@@ -109,7 +113,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
 
     private void OnEnable()
     {
@@ -121,29 +124,116 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    #region Canvas Methods
+    private bool GetCanvasRefs()
+    {
+        if (System.Enum.TryParse(SceneManager.GetActiveScene().name, out Scenes currentScene))
+        {
+            switch (currentScene)
+            {
+                case Scenes.Menu:
+                    // Get the Canvas ref
+                    canvas = GameObject.Find("Canvas");
+                    if (canvas == null)
+                    {
+                        Debug.LogError("The " + canvas + " object is null");
+                        return false;
+                    }
+                    // Get the panels refs.
+                    titlePanel = canvas.transform.Find("TitlePanel")?.gameObject;
+                    if (titlePanel == null)
+                    {
+                        Debug.LogError("The " + titlePanel + " object is null");
+                        return false;
+                    }
+                    break;
+                case Scenes.Level1:
+                case Scenes.Level2:
+                case Scenes.Level3:
+                    // Get the Canvas ref
+                    canvas = GameObject.Find("Canvas");
+                    if (canvas == null)
+                    {
+                        Debug.LogError("The " + canvas + " object is null");
+                        return false;
+                    }
+                    //// Get the Pause, Win & Loose Panels GOs                
+                    //pausePanel = canvas.transform.Find("PausePanel")?.gameObject;
+                    //if (pausePanel == null)
+                    //{
+                    //    Debug.LogError("The " + pausePanel + " object is null");
+                    //    return false;
+                    //}
+                    //winPanel = canvas.transform.Find("WinPanel")?.gameObject;
+                    //if (winPanel == null)
+                    //{
+                    //    Debug.LogError("The " + winPanel + " object is null");
+                    //    return false;
+                    //}
+                    //loosePanel = canvas.transform.Find("LoosePanel")?.gameObject;
+                    //if (loosePanel == null)
+                    //{
+                    //    Debug.LogError("The " + loosePanel + " object is null");
+                    //    return false;
+                    //}
+                    //LevelPassedPanel = canvas.transform.Find("LevelPassedPanel")?.gameObject;
+                    //if (LevelPassedPanel == null)
+                    //{
+                    //    Debug.LogError("The " + LevelPassedPanel + " object is null");
+                    //    return false;
+                    //}
+                    break;
+                default:
+                    break;
+            }
+        }
+        return true;
+    }
+    private void SetCanvasPanelsState()
+    {
+        if (System.Enum.TryParse(SceneManager.GetActiveScene().name, out Scenes currentScene))
+        {
+            switch (currentScene)
+            {
+                case Scenes.Menu:
+                    // Enable the TitlePanel Screen
+                    titlePanel.SetActive(true);
+                    break;
+                case Scenes.Level1:
+                case Scenes.Level2:
+                case Scenes.Level3:
+                    //// Disable all the Panels screens
+                    //pausePanel.SetActive(false);
+                    //SetWinPanel(false);
+                    //SetLoosePanel(false);
+                    //SetLevelPassedPanel(false);
+                    break;
+                default:
+                    break;
+            }
+        }        
+    }
+    #endregion
+
     #region Button Methods
     public void OnStartGameClick()
-    {        
-        // Disable the Title Panel
-        //titlePanel.SetActive(false);
-
+    {                
         SceneManager.LoadScene(Scenes.Level1.ToString());
     }
     #endregion
 
     #region Level Management    
     private void LevelStart()
-    {        
-        // Play Audio Fx
-        PlayStartLevelFx();
+    {
+        playerDependencies.InjectDependencies(player);
     }
     private void LevelWin()
     {
-        PlayWinLevelFx();
+        
     }
     private void LevelFail()
     {
-        PlayFailLevelFx();
+        
     }
     #endregion
 

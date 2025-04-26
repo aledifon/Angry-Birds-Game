@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0b0f733a01d1934f9e655714b3591bb, type: 3}
   m_Name: Player Data
   m_EditorClassIdentifier: 
+  maxStretch: 3
   birdFlyingFx: {fileID: 8300000, guid: 604d7d21446fbb14fb78a7966a48c780, type: 3}
   birdHitFx: {fileID: 8300000, guid: c68c2c4cc1faf0744a40f317e7c7af94, type: 3}
   groundLayer:
