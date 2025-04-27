@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Player Data
   m_EditorClassIdentifier: 
   maxStretch: 3
+  maxLifes: 5
   birdFlyingFx: {fileID: 8300000, guid: 604d7d21446fbb14fb78a7966a48c780, type: 3}
   birdHitFx: {fileID: 8300000, guid: c68c2c4cc1faf0744a40f317e7c7af94, type: 3}
   groundLayer:

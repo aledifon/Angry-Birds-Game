@@ -69,7 +69,8 @@ public class CameraFollow : MonoBehaviour
         bEnableFollowPlayerPos = true;
     }
     void EnableGoToInitCamPos()
-    {                
+    {
+        bEnableFollowPlayerPos = false;
         StartCoroutine(nameof(SetCamToInitPos));
     }
     private IEnumerator SetCamToInitPos()

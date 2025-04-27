@@ -8,7 +8,15 @@ public class TriggerPlayerDisable : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            EventManager.PlayerDisableEvent();
+            Bird player = collision.gameObject.GetComponent<Bird>();
+            if (player != null)
+            {
+                if (!player.TouchedGround)
+                {
+                    player.TouchedGround = true;
+                    EventManager.PlayerDisableEvent();
+                }
+            }            
         }
     }
 }

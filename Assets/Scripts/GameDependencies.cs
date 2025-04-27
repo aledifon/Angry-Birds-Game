@@ -9,6 +9,8 @@ public class GameDependencies : MonoBehaviour
     public Bird Player => player;
     [SerializeField] private Transform startPlayerPos;
     public Transform StartPlayerPos => startPlayerPos;
+    [SerializeField] private List<GameObject> playerLifesPos;
+    public List<GameObject> PlayerLifesPos => playerLifesPos;
 
     [Header("Catapult Script")]
     [SerializeField] private Catapult catapult;
@@ -41,7 +43,8 @@ public class GameDependencies : MonoBehaviour
     }
     public void InjectPlayerDependencies()
     {
-        player.SetDependencies(catapult,catapultFrontLineRenderer,catapultBackLineRenderer,catapultRb2D, startPlayerPos);
+        player.SetDependencies(catapult,catapultFrontLineRenderer,catapultBackLineRenderer,
+                                catapultRb2D, startPlayerPos, playerLifesPos);
         // Once the Player Dependencies has been injected then Trigger the Player Dep. Inj. Event
         EventManager.PlayerInitialSetup();
     }

@@ -6,6 +6,10 @@ public class Bird : MonoBehaviour
 {
     // Pos. Refs
     private Transform startPos;
+    private List<GameObject> playerLifesPos;
+
+    // Current Lifes
+    private int currentLifes;
 
     // Catapult Refs.
     private LineRenderer catapultFrontLR;
@@ -27,10 +31,13 @@ public class Bird : MonoBehaviour
     float circleRadius;         // Collider radius
     bool clickedOn;             // To know if the player has clicked over the bird
 
-    [Header("Audio Refs")]    
+    [Header("Audio Refs")]
     AudioSource birdAudioSource;
 
-    [SerializeField] private PlayerData playerData;    
+    [SerializeField] private PlayerData playerData;
+
+    private bool touchedGround;
+    public bool TouchedGround { get => touchedGround; set => touchedGround = value; }
 
     #region Unity API
     private void Awake()
@@ -41,6 +48,9 @@ public class Bird : MonoBehaviour
 
         sprite = GetComponent<SpriteRenderer>();
         collider2D = GetComponent<CircleCollider2D>();
+
+        // Set the initial current Lifes
+        currentLifes = playerData.MaxLifes;
     }
     void Start()
     {
@@ -50,6 +60,9 @@ public class Bird : MonoBehaviour
         //rayToMouse = new Ray(catapultBackLR.transform.position, Vector3.zero);
         //leftCatapultToBird = new Ray(catapultFrontLR.transform.position, Vector3.zero);
         circleRadius = GetComponent<CircleCollider2D>().radius;
+
+        //// Set the initial current Lifes
+        //currentLifes = playerData.MaxLifes;
     }
     private void OnEnable()
     {
@@ -261,11 +274,19 @@ public class Bird : MonoBehaviour
         sprite.enabled = false;
         collider2D.enabled = false;
 
-        // Play the Win (or Fail) Level Fx and wait for 3s
-        GameManager.Instance.PlayWinLevelFx();
-        yield return new WaitForSeconds(3f);
+        // If the player has no more lives
+        if (!IsPlayerAlive())
+        {
+            GameManager.Instance.PlayFailLevelFx();
+            yield return new WaitForSeconds(3f);
 
-        // Update the other Players (Lifes) Sprite positions
+            // Show Fail Panel or Trigger Fail Event
+            yield break;
+        }
+            
+        // If the player still has more lives
+        GameManager.Instance.PlayWinLevelFx();        
+        yield return new WaitForSeconds(3f);        
 
         // Trigger the Restart Level Event
         EventManager.RestartLevel();
@@ -277,6 +298,9 @@ public class Bird : MonoBehaviour
     {
         // Move the player again to the Start Game Position
         transform.position = startPos.position;
+
+        // Reset the Player Touch Ground Flag
+        touchedGround = false;
 
         // Set the Player's Rb as Kinematic again
         rb2D.bodyType = RigidbodyType2D.Kinematic;
@@ -297,8 +321,31 @@ public class Bird : MonoBehaviour
         sprite.enabled = enabled;
         collider2D.enabled = enabled;
 
-        //// Set the Player's Rb Velocity to zero
-        //rb2D.velocity = Vector2.zero;
+        // Update the Player Lifes Sprites
+        UpdateLifesSprites();
+    }
+    #endregion
+
+    #region Player Lifes
+    private bool IsPlayerAlive()
+    {
+        currentLifes--;
+        //UpdateLifesSprites();
+        if (currentLifes <= 0)
+            return false;
+        else
+            return true;
+    }
+    private void UpdateLifesSprites()
+    {
+        for(int i = 1; i <= playerLifesPos.Count; i++)
+        {
+            if (i<= currentLifes-1)
+                playerLifesPos[i - 1].SetActive(true);
+            else
+                playerLifesPos[i - 1].SetActive(false);
+        }                    
+            
     }
     #endregion
 
@@ -344,13 +391,15 @@ public class Bird : MonoBehaviour
     #endregion
 
     #region Dependency Injection
-    public void SetDependencies(Catapult catapult, LineRenderer catapultFrontLR, LineRenderer catapultBackLR, Rigidbody2D catapultRb2D, Transform startPos)
+    public void SetDependencies(Catapult catapult, LineRenderer catapultFrontLR, LineRenderer catapultBackLR, 
+                                Rigidbody2D catapultRb2D, Transform startPos, List<GameObject> playerLifesPos)
     {
         this.catapult = catapult;
         this.catapultFrontLR = catapultFrontLR;
         this.catapultBackLR = catapultBackLR;
         this.catapultRb2D = catapultRb2D;
         this.startPos = startPos;
+        this.playerLifesPos = playerLifesPos;
     }    
     #endregion
 }

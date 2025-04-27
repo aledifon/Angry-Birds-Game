@@ -8,6 +8,9 @@ public class PlayerData : ScriptableObject
     [SerializeField] float maxStretch;                      // Max stretching distance   
     public float MaxStretch {  get { return maxStretch; } }
 
+    [SerializeField] int maxLifes;                      // Max Lifes
+    public int MaxLifes { get { return maxLifes; } }
+
     [Header("Audio Clips")]
     [SerializeField] AudioClip birdFlyingFx;
     public AudioClip BirdFlyingFx { get => birdFlyingFx; }
