@@ -647,6 +647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2e58ca417476d248b18d74f750379f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TotalOfEnemies: 3
   player: {fileID: 8383650207644119987}
   startPlayerPos: {fileID: 1665560132}
   playerLifesPos:

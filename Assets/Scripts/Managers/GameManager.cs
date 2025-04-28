@@ -39,6 +39,10 @@ public class GameManager : MonoBehaviour
     private GameObject canvas;
     private GameObject titlePanel;
 
+    // Enemies
+    private int currentNumOfEnemies;
+    public int CurrentNumOfEnemies { get => currentNumOfEnemies; set => currentNumOfEnemies = value; }
+
     #region Enums
     public enum Scenes { Menu, Level1, Level2, Level3 }
     private Scenes sceneSelected = Scenes.Menu;
@@ -224,8 +228,11 @@ public class GameManager : MonoBehaviour
     public void SetLeveLReferences(Bird player, GameDependencies dependencies)
     {
         this.Player = player;
-        this.Dependencies = dependencies;                
-    }
+        this.Dependencies = dependencies;  
+        
+        // Set the initial Num of Enemies of the current Level
+        currentNumOfEnemies = this.Dependencies.MaxNumOfEnemies;
+    }    
     private void LevelStart()
     {
         Dependencies.InjectPlayerDependencies();

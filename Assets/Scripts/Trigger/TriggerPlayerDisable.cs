@@ -14,7 +14,7 @@ public class TriggerPlayerDisable : MonoBehaviour
                 if (!player.TouchedGround)
                 {
                     player.TouchedGround = true;
-                    EventManager.PlayerDisableEvent();
+                    EventManager.PlayerOnGroundEvent();
                 }
             }            
         }

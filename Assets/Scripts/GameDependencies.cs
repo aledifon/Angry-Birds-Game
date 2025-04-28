@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class GameDependencies : MonoBehaviour
 {
+    [Header("Enemies")]
+    [SerializeField] private int maxNumOfEnemies;
+    public int MaxNumOfEnemies => maxNumOfEnemies;
+
     [Header("Player")]
     [SerializeField] private Bird player;
     public Bird Player => player;

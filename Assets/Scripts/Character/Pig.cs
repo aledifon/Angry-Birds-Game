@@ -30,6 +30,9 @@ public class Pig : MonoBehaviour
 
     private void Die()
     {
+        // Decrease the Num of Enemies of the Level
+        GameManager.Instance.CurrentNumOfEnemies--;        
+
         //circleCollider2D.enabled = false;
         PlayDieAnimation();
         Destroy(gameObject,4f);

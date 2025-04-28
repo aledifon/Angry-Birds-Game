@@ -29,7 +29,7 @@ public class EventManager : MonoBehaviour
     {
         onTriggerCamMove?.Invoke();
     }
-    public static void PlayerDisableEvent()
+    public static void PlayerOnGroundEvent()
     {
         onPlayerTouchGround?.Invoke();
     }
